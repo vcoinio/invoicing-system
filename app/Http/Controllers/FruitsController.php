@@ -18,24 +18,25 @@ class FruitsController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('fruits.create')->with('categories', $categories);
+        return view('fruits.create', ['categories' => $categories]);
     }
     public function store(Request $request)
     {
         $request->validate([
             'FruitName' => 'required|unique:fruits',
             'Unit' => 'required',
-            'Price' => 'required|float|min:0|max:1000000',
+            'Price' => 'required|min:0|max:1000000',
         ]);
 
         $fruit = Fruit::create([
             'FruitName' => $request->input('FruitName'),
             'Unit' => $request->input('Unit'),
             'Price' => $request->input('Price'),
-            'Categoryid' => $request->input('CategoryId')
+            'FruitName' => $request->input('selectedCategory')
+
 
         ]);
         $fruit->save();
-        return redirect('/fruits');
+        return redirect('/fruits')->with('success');
     }
 }

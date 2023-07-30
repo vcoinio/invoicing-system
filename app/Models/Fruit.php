@@ -10,7 +10,7 @@ class Fruit extends Model
     use HasFactory;
     protected $table = 'fruits';
     protected $primaryKey = 'id';
-    protected $fillable = ['Categoryid', 'FruitName', 'Unit', 'Price'];
+    protected $fillable = ['FruitType', 'FruitName', 'Unit', 'Price'];
     public function category()
     {
         return $this->belongsTo(Category::class);
