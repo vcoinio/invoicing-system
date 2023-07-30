@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\FruitsController;
 use App\Http\Controllers\InvoicesController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostCategoryController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,25 +20,26 @@ use App\Http\Controllers\InvoicesController;
 
 
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [
+    HomeController::class, 'HomeIndex'
+])->name('home');
 
 Route::get('categories', [
     CategoriesController::class,
-    'index'
-]);
+    'CategoryIndex'
+])->name('categories');
 
 Route::get('fruits', [
     FruitsController::class,
-    'index'
-]);
+    'FruitIndex'
+])->name('fruits');
 
 Route::get('invoices', [
     InvoicesController::class,
-    'index'
-]);
+    'InvoiceIndex'
+])->name('invoces');
 
-Route::get('/redirect', function () {
-    return redirect('/');
-});
+Route::get('postCategory', [
+    PostCategoryController::class,
+    'PostIndex'
+])->name('postCategory');

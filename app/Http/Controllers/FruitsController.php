@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 class FruitsController extends Controller
 {
-    public function index()
+    public function FruitIndex()
     {
         $title = 'This is an object';
-        return view('fruits.index', compact('title'));
+        return view('fruits.FruitIndex', compact('title'));
     }
 }
