@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('fruits', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('Categoryid');
-            $table->foreign('Categoryid')->references('id')->on('categories');
+            // $table->unsignedInteger('Categoryid');
+            // $table->foreign('Categoryid')->references('id')->on('categories');
             $table->string('FruitName')->unique();
             $table->enum('Unit', ['kg', 'pcs', 'pack', null])->default(null)->unique()->nullable();
             $table->float('Price');

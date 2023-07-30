@@ -19,24 +19,16 @@ use App\Http\Controllers\PostCategoryController;
 */
 
 
-
+//Home
 Route::get('/', [
     HomeController::class, 'index'
 ])->name('home');
 
+//Category
 Route::get('categories', [
     CategoriesController::class,
     'index'
 ])->name('categories');
-
-Route::get('fruits', [
-    FruitsController::class,
-    'index'
-])->name('fruits');
-
-Route::get('fruits/create', [
-    FruitsController::class, 'create'
-])->name('createfruit');
 
 Route::get('categories/create', [
     CategoriesController::class,
@@ -47,6 +39,16 @@ Route::post('categories/store', [
     PostCategoryController::class, 'store'
 ]);
 
+//Fruit
+Route::get(
+    'fruits',
+    [FruitsController::class, 'index']
+);
+
+Route::get('fruits/create', [FruitsController::class, 'create']);
+Route::post('fruits/create', [FruitsController::class, 'store']);
+
+//Invoice
 Route::get('invoices', [
     InvoicesController::class,
     'index'
