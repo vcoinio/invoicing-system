@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>You got a Category</h1>
+    <h1>This page will show Fruits Master</h1>
+    <a href="fruits/create" class="create-fruit" role="button">Register a new fruit master</a>
 </body>
 </html>

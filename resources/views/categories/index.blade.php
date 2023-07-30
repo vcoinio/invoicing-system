@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Please insert new type of fruit here</h1>
+    <h1>This is all categories of fruit:</h1>
     {{-- @if (1<2)
         <h3> 1 is really smaller than 2</h3>
     @else <h3>1 is bigger than 2</h3>
@@ -18,6 +18,7 @@
             <div>{{ $category->FruitType }}</div>
         </li>
     @endforeach
+    <a href="categories/create" class="create-button" role="button">Register a new fruit type</a>
 
 </body>
 </html>

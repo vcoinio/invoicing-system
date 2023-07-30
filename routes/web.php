@@ -21,22 +21,35 @@ use App\Http\Controllers\PostCategoryController;
 
 
 Route::get('/', [
-    HomeController::class, 'HomeIndex'
+    HomeController::class, 'index'
 ])->name('home');
 
 Route::get('categories', [
     CategoriesController::class,
-    'CategoryIndex'
+    'index'
 ])->name('categories');
 
 Route::get('fruits', [
     FruitsController::class,
-    'FruitIndex'
+    'index'
 ])->name('fruits');
+
+Route::get('fruits/create', [
+    FruitsController::class, 'create'
+])->name('createfruit');
+
+Route::get('categories/create', [
+    CategoriesController::class,
+    'create'
+])->name('create');
+
+Route::post('categories/store', [
+    PostCategoryController::class, 'store'
+]);
 
 Route::get('invoices', [
     InvoicesController::class,
-    'InvoiceIndex'
+    'index'
 ])->name('invoces');
 
 Route::get('postCategory', [
