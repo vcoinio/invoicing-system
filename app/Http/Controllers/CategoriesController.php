@@ -21,9 +21,11 @@ class CategoriesController extends Controller
 
     public function store(Request $request)
     {
-        $category = new category();
-        $category->FruitType = $request->input('FruitType');
+        $category = Category::create([
+            'FruitType' => $request->input('FruitType')
+        ]);
         $category->save();
-        return redirect('/catefories')->with('success');
+
+        return redirect('/categories')->with('success');
     }
 }

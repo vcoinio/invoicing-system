@@ -10,15 +10,16 @@ class FruitsController extends Controller
 {
     public function index()
     {
-        $title = 'This is an object';
-        return view('fruits.index', compact('title'));
+        $fruits = Fruit::all();
+        return view('fruits.index', ['fruits' => $fruits]);
     }
 
 
     public function create()
     {
+
         $categories = Category::all();
-        return view('fruits.create', ['categories' => $categories]);
+        return view('fruits.create', ['categories' => $categories,]);
     }
     public function store(Request $request)
     {
@@ -32,7 +33,7 @@ class FruitsController extends Controller
             'FruitName' => $request->input('FruitName'),
             'Unit' => $request->input('Unit'),
             'Price' => $request->input('Price'),
-            'FruitName' => $request->input('selectedCategory')
+            'FruitCategory' => $request->input('selectedCategory')
 
 
         ]);

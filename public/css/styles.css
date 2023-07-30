@@ -1,0 +1,72 @@
+/* Apply basic styling to the entire table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+  
+  /* Style the table header */
+  thead {
+    background-color: #f2f2f2;
+  }
+  
+  th {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Style the table rows */
+  tr {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Style the table cells */
+  td {
+    padding: 10px;
+  }
+  
+  /* Apply alternate background color to table rows */
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .list-category {
+        list-style: none;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .list-category div {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .create-button {
+        display: block;
+        width: 200px;
+        text-align: center;
+        padding: 10px;
+        margin-top: 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .create-button:hover {
+        background-color: #0056b3;
+    }

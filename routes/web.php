@@ -5,7 +5,6 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\FruitsController;
 use App\Http\Controllers\InvoicesController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PostCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,8 +34,8 @@ Route::get('categories/create', [
     'create'
 ])->name('create');
 
-Route::post('categories/store', [
-    PostCategoryController::class, 'store'
+Route::post('categories/create', [
+    CategoriesController::class, 'store'
 ]);
 
 //Fruit
