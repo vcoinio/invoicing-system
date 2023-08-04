@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Invoicing homepage</h1>
-</body>
-</html>
+<x-app-layout>
+    @if ($userExists)
+    <h1>Invoicing application homepage</h1>
+    <a href="categories" class="create-button" role="button">Fruit category page</a>
+    <a href="fruits" class="create-button" role="button">Fruit detail page</a>
+    <a href="invoices" class="create-button" role="button">Invoice page</a>
+
+    @else
+
+    <a href="/login"> Please login</a>
+    @endif
+</x-app-layout>

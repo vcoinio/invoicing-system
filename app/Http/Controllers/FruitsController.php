@@ -17,7 +17,6 @@ class FruitsController extends Controller
 
     public function create()
     {
-
         $categories = Category::all();
         return view('fruits.create', ['categories' => $categories,]);
     }
@@ -39,5 +38,10 @@ class FruitsController extends Controller
         ]);
         $fruit->save();
         return redirect('/fruits')->with('success');
+    }
+    public function getFruit($fruitId)
+    {
+        $fruit = Fruit::find($fruitId);
+        return $fruit;
     }
 }

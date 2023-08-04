@@ -10,4 +10,13 @@ class Invoice extends Model
     use HasFactory;
     protected $table = 'invoices';
     protected $primaryKey = 'id';
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'CustomerID');
+    }
+    public function fruits()
+    {
+        return $this->belongsToMany(Fruit::class)->withPivot('quantity');
+    }
 }

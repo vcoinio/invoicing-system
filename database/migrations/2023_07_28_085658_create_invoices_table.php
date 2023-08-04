@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedBigInteger('CustomerID');
+            $table->foreign('CustomerID')->references('id')->on('customers')->onDelete('cascade');
             $table->string('InvoiceNo');
-            $table->integer('Item');
-            $table->unsignedInteger('FruitID');
-            $table->foreign('FruitID')->references('id')->on('fruits');
-            $table->integer('Quantity');
             $table->timestamps();
         });
     }
