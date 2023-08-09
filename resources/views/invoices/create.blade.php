@@ -2,7 +2,6 @@
     <h1> This page show the invoices </h1>
         <table id="invoiceTable">
             <thead>
-            <p>Customer Name</p>
             <form id="createCustomerForm" method="POST" action="{{ route('customers.store') }}">
                 @csrf
                 <div class="customer-container">
@@ -22,17 +21,16 @@
                     <th>Amount</th>
                 </tr>
             </thead>
+            <div class="button-container">
+                <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
+                <button class="create-button" type="button" onclick="submit()">Submit</button>
+                <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
+                <button class="create-button" type="button" onclick="checkAmount()">Check Amount</button>
+            </div>
             <tbody>
-                <div class="button-container">
-                    <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
-                    <button class="create-button" type="button" onclick="checkRows()">Check Fruit</button>
-                    <button class="create-button" type="button" onclick="submit()()">Submit</button>
-                </div>
-                {{-- @foreach ($invoice->fruits as $fruit) --}}
                 <tr>
 
                 </tr>
-                {{-- @endforeach --}}
             </tbody>
         </table>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -57,7 +55,7 @@
                         <option value="{{ $fruit->id }}">{{ $fruit->id }}</option>
                     @endforeach
                 </select>
-                <button class="create-button" type="button" onclick="checkRows(${rowCount})">Check Fruit</button>
+                <button class="create-button" type="button" onclick="checkRow(${rowCount})">Check Fruit</button>
                 </div>`;
             const cell2 = newRow.insertCell(2);
             cell2.innerHTML = `<input type="text" placeholder="Fruit Name ${rowCount}" name="fruits[${rowCount}][FruitName]" disabled>`;
@@ -75,46 +73,67 @@
             cell6.innerHTML = `<input type="text" placeholder="Quantity ${rowCount}" name="fruits[${rowCount}][quantity]" >`;
                 
             const cell7 = newRow.insertCell(7);
-            cell7.innerHTML = `<input type="text" placeholder="Amount ${rowCount}" name="fruits[${rowCount}][amount]" readonly>`;
-    
-            // Add more cells with placeholders for additional columns as needed
+            cell7.innerHTML = `<input type="text" placeholder="Amount ${rowCount}" name="fruits[${rowCount}][amount]" readonly>`;       
         }
     
 
-        function checkRows() {
-            const rowIndex = rowCount; // Use the global rowCount variable as the rowIndex
+        function checkRow(rowCount) {
+            const tableBody = document.querySelector("#invoiceTable tbody");
+            const rowIndex = rowCount; 
             console.log("Row index:", rowIndex);
+            const newRow = tableBody.rows[rowIndex];
+            const selected = newRow.querySelector("td:nth-child(2) select");
+            console.log("Select element:", selected);
 
-            const select = document.querySelector(`#invoiceTable tbody tr:nth-child(${rowIndex}) td:nth-child(1) select`);
-            console.log("Select element:", select);
-
-            if (!select) {
+            if (!selected) {
                 console.error("Select element not found.");
                 return;
             }
 
-            const fruitId = select.value;
+            const fruitId = selected.value;
 
             // Make an AJAX request to fetch the fruit data
             fetch(`/fruits/getFruit/${fruitId}`)
                 .then(response => response.json())
                 .then(data => {
-                const fruitNameInput = document.querySelector(`#invoiceTable tbody tr:nth-child(${rowIndex}) td:nth-child(2) input`);
-                const fruitCategoryInput = document.querySelector(`#invoiceTable tbody tr:nth-child(${rowIndex}) td:nth-child(3) input`);
+                    const fruitName = newRow.querySelector("td:nth-child(3) input");
+                    const fruitCategory = newRow.querySelector("td:nth-child(4) input");
+                    const unit = newRow.querySelector("td:nth-child(5) input");
+                    const price = newRow.querySelector("td:nth-child(6) input");
+                    const quantity = newRow.querySelector("td:nth-child(7) input");
+                    const amount = newRow.querySelector("td:nth-child(8) input");
 
-                if (data && data.FruitName && data.FruitCategory) {
-                    fruitNameInput.value = data.FruitName;
-                    fruitCategoryInput.value = data.FruitCategory;
-                } else {
-                    fruitNameInput.value = 'Fruit data not found';
-                    fruitCategoryInput.value = 'Fruit data not found';
-                    console.error("Fruit data not found.");
-                }
+                    fruitName.value = data.FruitName;
+                    fruitCategory.value = data.FruitCategory;
+                    unit.value = data.Unit;
+                    price.value = data.Price;
+                    amount.value = (quantity.value*data.Price);
+
                 })
                 .catch(error => {
                 console.error('Error fetching fruit data:', error);
                 });
+
+        }
+        function checkAmount() {
+            const tableBody = document.querySelector("#invoiceTable tbody");
+            const total = document.querySelector("#total-amount input");
+            let totalAmount = 0;
+            const allrow = tableBody.querySelectorAll("tr");
+            
+            for (const row of allrow) {
+                const amountCell = row.querySelector("td:nth-child(8)");
+                if (amountCell) {
+                    const amount = parseFloat(amountCell.textContent);
+                    if (!isNaN(amount)) {
+                        totalAmount += amount;
+                    }
+                }
             }
+            
+            total.value = totalAmount;
+            console.log("Total Amount:", totalAmount);
+        }
     </script>
 </x-app-layout>
 
