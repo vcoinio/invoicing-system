@@ -1,38 +1,40 @@
 <x-app-layout>
     <h1> This page show the invoices </h1>
-        <table id="invoiceTable" class="invoice-table">
-            <thead>
-            <form id="createCustomerForm" method="POST" action="{{ route('customers.store') }}">
-                @csrf
-                <div class="customer-container">
-                <label for="customer_name">Customer Name:</label>
-                <input type="text" id="customer_name" name="Customer_Name" required>
-                <button class="small-button" type="submit" id="createButton"> Create customer</button>
-                <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
-                <button class="small-button" type="button" onclick="checkAmount()">Check Amount</button>
-                </div>
-            </form>
-                <tr class="table-header">
-                    <th>No#</th>
-                    <th>Fruit ID</th>
-                    <th>Fruit Name</th>
-                    <th>Fruit Category</th>
-                    <th>Unit</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <div class="button-container">
-                <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
-                <button class="create-button" type="button" onclick="submit()">Submit</button>
-            </div>
-            <tbody>
-                <tr class="table-data">
+    <div class="customer-container">
+        <form id="invoiceForm" method="POST" action="{{ route('invoices.store') }}">
+            @csrf
+            <label for="customer_name">Customer Name:</label>
+            <input type="text" id="customer_name" name="customer_name" required>        
+            <button class="create-button" type="button" onclick="submit()">Submit Invoice</button>
+        </form>
+        <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
+        <button class="small-button" type="button" onclick="checkAmount()">Check Amount</button>
+    </div>
+    <div class="button-container">
+        <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
+    </div>
+    <table id="invoiceTable" class="invoice-table">
+        <thead>
+            <tr class="table-header">
+                <th>No#</th>
+                <th>Fruit ID</th>
+                <th>Fruit Name</th>
+                <th>Fruit Category</th>
+                <th>Unit</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-data">
+                <!-- Your table data content will go here -->
+            </tr>
+        </tbody>
+    </table>
+    
 
-                </tr>
-            </tbody>
-        </table>
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let rowCount = 0;
@@ -55,7 +57,7 @@
                         <option value="{{ $fruit->id }}">{{ $fruit->id }}</option>
                     @endforeach
                 </select>
-                <button class="small-button" type="button" onclick="checkRow(${rowCount})">Check Fruit</button>
+                <button class="small-button" type="button" onclick="checkRow(${rowCount})">Check Row</button>
                 </div>`;
             const cell2 = newRow.insertCell(2);
             cell2.innerHTML = `<input type="text" placeholder="Fruit Name ${rowCount}" name="fruits[${rowCount}][FruitName]" disabled>`;
@@ -120,7 +122,6 @@
             const total = document.querySelector("#total-amount input");
             let totalAmount = 0;
             const allrow = tableBody.querySelectorAll("tr");
-            
             for (const row of allrow) {
                 // const price = row.querySelector("td:nth-child(6) input");
                 // const quantity = row.querySelector("td:nth-child(7) input");
@@ -135,9 +136,39 @@
             }
             console.log("Total Amount:", totalAmount);
             total.value = totalAmount;
-
-
         }
+        function submit() {
+            const tableBody = document.querySelector("#invoiceTable tbody");
+            const form = document.getElementById("invoiceForm");
+
+            const formData = new FormData(form);
+
+            let fruit_ids = [];
+            const allrow = tableBody.querySelectorAll("tr");
+            for (const row of allrow) {
+                const ids = row.querySelector("td:nth-child(2)");
+                if (ids) {
+                    fruit_ids.push(ids.value);
+                }
+            }
+
+            formData.append("fruit_ids[]", fruit_ids);
+
+            // Submit the form using fetch
+            fetch(form.action, {
+                method: "POST",
+                body: formData
+            }).then(response => response.json())
+            .then(data => {
+                // Handle response if needed
+            })
+            .catch(error => {
+                // Handle error
+            });
+        }
+
+
+
     </script>
 </x-app-layout>
 

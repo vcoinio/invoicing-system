@@ -45,5 +45,30 @@ class InvoicesController extends Controller
     }
     public function store(Request $request)
     {
+        $customerName = $request->input('customer_name');
+        $customer = Customer::where('Customer_Name', $customerName)->first();
+
+        if (!$customer) {
+            $customer = Customer::create([
+                'Customer_Name' => $request->input('customer_name')
+            ]);
+            $customer->save();}
+
+        $invoice = Invoice::create([
+            'customerID'=>$customer->id,
+        ]);
+        $invoice->save(); 
+
+        $selectedFruitIds = $request->input('fruit_ids',[]);
+
+        foreach ($selectedFruitIds as $fruitId) {
+            $fruit = Fruit::find($fruitId);
+    
+            if ($fruit) {
+                $invoice->fruits()->attach($fruit);
+            }
+        }
+        return redirect()->route('invoices.index')->with('success');
     }
+    
 }

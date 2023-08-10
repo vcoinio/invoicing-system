@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
     //Invoice
     Route::get('invoices', [InvoicesController::class, 'index'])->name('invoices.index');
     Route::get('invoices/create', [InvoicesController::class, 'create'])->name('invoices.create');
-    Route::post('invoice/create', [InvoicesController::class, 'store'])->name('invoices.store');
+    Route::post('invoices/create', [InvoicesController::class, 'store'])->name('invoices.store');
     Route::get('invoices/select', [InvoicesController::class, 'select'])->name('invoices.select');
     Route::get('invoices/{invoice}', [InvoicesController::class, 'edit'])->name('invoices.edit');
     Route::delete('invoices/{invoice}', [InvoicesController::class, 'delete'])->name('invoices.delete');

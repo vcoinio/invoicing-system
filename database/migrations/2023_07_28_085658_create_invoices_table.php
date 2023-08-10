@@ -15,7 +15,6 @@ return new class extends Migration
             $table->increments('id');
             $table->unsignedBigInteger('CustomerID');
             $table->foreign('CustomerID')->references('id')->on('customers')->onDelete('cascade');
-            $table->string('InvoiceNo');
             $table->timestamps();
         });
     }
