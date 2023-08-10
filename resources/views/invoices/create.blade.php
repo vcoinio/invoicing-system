@@ -1,16 +1,18 @@
 <x-app-layout>
     <h1> This page show the invoices </h1>
-        <table id="invoiceTable">
+        <table id="invoiceTable" class="invoice-table">
             <thead>
             <form id="createCustomerForm" method="POST" action="{{ route('customers.store') }}">
                 @csrf
                 <div class="customer-container">
                 <label for="customer_name">Customer Name:</label>
                 <input type="text" id="customer_name" name="Customer_Name" required>
-                <button class="create-button" type="submit" id="createButton"> Create customer</button>
+                <button class="small-button" type="submit" id="createButton"> Create customer</button>
+                <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
+                <button class="small-button" type="button" onclick="checkAmount()">Check Amount</button>
                 </div>
             </form>
-                <tr>
+                <tr class="table-header">
                     <th>No#</th>
                     <th>Fruit ID</th>
                     <th>Fruit Name</th>
@@ -24,11 +26,9 @@
             <div class="button-container">
                 <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
                 <button class="create-button" type="button" onclick="submit()">Submit</button>
-                <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
-                <button class="create-button" type="button" onclick="checkAmount()">Check Amount</button>
             </div>
             <tbody>
-                <tr>
+                <tr class="table-data">
 
                 </tr>
             </tbody>
@@ -47,7 +47,7 @@
             cell0.textContent = rowCount;
     
             const cell1 = newRow.insertCell(1);
-            // Add a dropdown for the user to select the fruit ID
+
             cell1.innerHTML = `<div class="customer-container">
                 <select name="fruits[${rowCount}][id]" required>
                     <option value="">Select Fruit ID</option>
@@ -55,7 +55,7 @@
                         <option value="{{ $fruit->id }}">{{ $fruit->id }}</option>
                     @endforeach
                 </select>
-                <button class="create-button" type="button" onclick="checkRow(${rowCount})">Check Fruit</button>
+                <button class="small-button" type="button" onclick="checkRow(${rowCount})">Check Fruit</button>
                 </div>`;
             const cell2 = newRow.insertCell(2);
             cell2.innerHTML = `<input type="text" placeholder="Fruit Name ${rowCount}" name="fruits[${rowCount}][FruitName]" disabled>`;
@@ -107,7 +107,7 @@
                     fruitCategory.value = data.FruitCategory;
                     unit.value = data.Unit;
                     price.value = data.Price;
-                    amount.value = (quantity.value*data.Price);
+                    amount.value = (quantity.value*price.value);
 
                 })
                 .catch(error => {
@@ -122,17 +122,21 @@
             const allrow = tableBody.querySelectorAll("tr");
             
             for (const row of allrow) {
-                const amountCell = row.querySelector("td:nth-child(8)");
+                // const price = row.querySelector("td:nth-child(6) input");
+                // const quantity = row.querySelector("td:nth-child(7) input");
+                const amountCell = row.querySelector("td:nth-child(8) input");
                 if (amountCell) {
-                    const amount = parseFloat(amountCell.textContent);
-                    if (!isNaN(amount)) {
-                        totalAmount += amount;
-                    }
+                    // const amount = (quantity.value*price.value);
+                    console.log("amount cell:", amountCell.value);
+                        totalAmount = parseInt(totalAmount) + parseInt(amountCell.value);
                 }
+                //     // const amount = parseFloat(amountCell.name);
+                // }
             }
-            
-            total.value = totalAmount;
             console.log("Total Amount:", totalAmount);
+            total.value = totalAmount;
+
+
         }
     </script>
 </x-app-layout>

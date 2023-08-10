@@ -72,9 +72,20 @@ table {
     }
     .button-container {
       display: flex;
-      gap: 10px; /* Adjust the gap between buttons as needed */
+      gap: 10px; 
     }
     .customer-container {
       display: flex;
-      gap: 10px; /* Adjust the gap between buttons as needed */
+      gap: 10px; 
     }
+    .small-button{
+      width: 60px;
+      color:blue;
+      gap: 3px;
+    }
+    input[type="text"] {
+      display: block; /* Change to block-level element */
+      width: 120px; /* Set the desired width here */
+      padding: 5px;
+      box-sizing: border-box; /* Include padding and border in the total width */
+  }
