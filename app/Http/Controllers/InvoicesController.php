@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Fruit;
 use App\Models\Invoice;
 use App\Models\Customer;
@@ -43,32 +44,50 @@ class InvoicesController extends Controller
         $fruits = Fruit::all();
         return view('invoices.select', ['fruits' => $fruits]);
     }
+
     public function store(Request $request)
-    {
+    {   
+        $validator = Validator::make($request->all(), [
+            'customer_name' => 'required|string',
+            'fruit_details' => 'required|array|min:1', // At least one item is required
+            'fruit_details.*.fruit_id' => 'required|exists:fruits,id', // Check if fruit_id exists in the fruits table
+            'fruit_details.*.quantity' => 'required|integer|min:1', // Quantity must be a positive integer
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+
         $customerName = $request->input('customer_name');
         $customer = Customer::where('Customer_Name', $customerName)->first();
-
+    
         if (!$customer) {
             $customer = Customer::create([
                 'Customer_Name' => $request->input('customer_name')
             ]);
-            $customer->save();}
-
-        $invoice = Invoice::create([
-            'customerID'=>$customer->id,
-        ]);
-        $invoice->save(); 
-
-        $selectedFruitIds = $request->input('fruit_ids',[]);
-
-        foreach ($selectedFruitIds as $fruitId) {
-            $fruit = Fruit::find($fruitId);
+        }
     
+        $invoice = Invoice::create([
+            'customerID' => $customer->id,
+        ]);
+    
+        $fruitDetailsJSON = $request->input('fruit_details');
+        $fruitDetails = json_decode($fruitDetailsJSON);
+        
+        foreach ($fruitDetails as $detail) {
+            $fruit_id = $detail->fruit_id;
+            $quantity = $detail->quantity;
+        
+            $fruit = Fruit::find($fruit_id);
+        
             if ($fruit) {
-                $invoice->fruits()->attach($fruit);
+                $invoice->fruits()->attach($fruit, ['quantity' => $quantity]);
             }
         }
-        return redirect()->route('invoices.index')->with('success');
+        return redirect('/invoices')->with('success');
     }
-    
+
 }
