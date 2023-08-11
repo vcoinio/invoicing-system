@@ -1,55 +1,55 @@
 <x-app-layout>
     <h1> This page show the invoices </h1>
-        <table id="invoiceTable">
-            <thead>
-            <p>Customer Name</p>
-            <form id="createCustomerForm" method="POST" action="{{ route('customers.store') }}">
-                @csrf
-                <div class="customer-container">
-                <label for="customer_name">Customer Name:</label>
-                <input type="text" id="customer_name" name="Customer_Name" required>
-                <button class="create-button" type="submit" id="createButton"> Create customer</button>
-                </div>
-            </form>
-                <tr>
-                    <th>No#</th>
-                    <th>Fruit ID</th>
-                    <th>Fruit Name</th>
-                    <th>Fruit Category</th>
-                    <th>Unit</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <div class="button-container">
-                    <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
-                    <button class="create-button" type="button" onclick="checkRows()">Check Fruit</button>
-                    <button class="create-button" type="button" onclick="submit()()">Submit</button>
-                </div>
-                {{-- @foreach ($invoice->fruits as $fruit) --}}
-                <tr>
+    <div class="customer-container">
+        <form id="invoiceForm" method="POST" action="{{ route('invoices.store') }}">
+            @csrf
+            <label for="customer_name">Customer Name:</label>
+            <input type="text" id="customer_name" name="customer_name" required>
+            <button id="submitButton" class="create-button" type="button" onclick="submitForm()">Submit Invoice</button>
+        </form>
+        <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
+        <button class="small-button" type="button" onclick="checkAmount()">Check Amount</button>
 
-                </tr>
-                {{-- @endforeach --}}
-            </tbody>
-        </table>
+        <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
+    </div>
+
+    <table id="invoiceTable" class="invoice-table">
+        <thead>
+            <tr class="table-header">
+                <th>No#</th>
+                <th>Fruit ID</th>
+                <th>Fruit Name</th>
+                <th>Fruit Category</th>
+                <th>Unit</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-data">
+
+            </tr>
+        </tbody>
+    </table>
+
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let rowCount = 0;
         const fruitsData = @json($fruits);
-    
+
         function addRow() {
             rowCount++;
             const tableBody = document.getElementById('invoiceTable').getElementsByTagName('tbody')[0];
             const newRow = tableBody.insertRow();
-    
+
             const cell0 = newRow.insertCell(0);
             cell0.textContent = rowCount;
-    
+
             const cell1 = newRow.insertCell(1);
-            // Add a dropdown for the user to select the fruit ID
+
             cell1.innerHTML = `<div class="customer-container">
                 <select name="fruits[${rowCount}][id]" required>
                     <option value="">Select Fruit ID</option>
@@ -57,64 +57,111 @@
                         <option value="{{ $fruit->id }}">{{ $fruit->id }}</option>
                     @endforeach
                 </select>
-                <button class="create-button" type="button" onclick="checkRows(${rowCount})">Check Fruit</button>
+                <button class="small-button" type="button" onclick="checkRow(${rowCount})">Check Row</button>
                 </div>`;
             const cell2 = newRow.insertCell(2);
-            cell2.innerHTML = `<input type="text" placeholder="Fruit Name ${rowCount}" name="fruits[${rowCount}][FruitName]" disabled>`;
-    
+            cell2.innerHTML =
+                `<input type="text" placeholder="Fruit Name ${rowCount}" name="fruits[${rowCount}][FruitName]" disabled>`;
+
             const cell3 = newRow.insertCell(3);
-            cell3.innerHTML = `<input type="text" placeholder="Fruit Category ${rowCount}" name="fruits[${rowCount}][FruitCategory]" readonly>`;
-    
+            cell3.innerHTML =
+                `<input type="text" placeholder="Fruit Category ${rowCount}" name="fruits[${rowCount}][FruitCategory]" readonly>`;
+
             const cell4 = newRow.insertCell(4);
-            cell4.innerHTML = `<input type="text" placeholder="Unit ${rowCount}" name="fruits[${rowCount}][unit]" readonly>`;
-    
+            cell4.innerHTML =
+                `<input type="text" placeholder="Unit ${rowCount}" name="fruits[${rowCount}][unit]" readonly>`;
+
             const cell5 = newRow.insertCell(5);
-            cell5.innerHTML = `<input type="text" placeholder="Price ${rowCount}" name="fruits[${rowCount}][price]" readonly>`;
-    
+            cell5.innerHTML =
+                `<input type="text" placeholder="Price ${rowCount}" name="fruits[${rowCount}][price]" readonly>`;
+
             const cell6 = newRow.insertCell(6);
-            cell6.innerHTML = `<input type="text" placeholder="Quantity ${rowCount}" name="fruits[${rowCount}][quantity]" >`;
-                
+            cell6.innerHTML =
+                `<input type="text" placeholder="Quantity ${rowCount}" name="fruits[${rowCount}][quantity]" >`;
+
             const cell7 = newRow.insertCell(7);
-            cell7.innerHTML = `<input type="text" placeholder="Amount ${rowCount}" name="fruits[${rowCount}][amount]" readonly>`;
-    
-            // Add more cells with placeholders for additional columns as needed
+            cell7.innerHTML =
+                `<input type="text" placeholder="Amount ${rowCount}" name="fruits[${rowCount}][amount]" readonly>`;
         }
-    
 
-        function checkRows() {
-            const rowIndex = rowCount; // Use the global rowCount variable as the rowIndex
+
+        function checkRow(rowCount) {
+            const tableBody = document.querySelector("#invoiceTable tbody");
+            const rowIndex = rowCount;
             console.log("Row index:", rowIndex);
+            const newRow = tableBody.rows[rowIndex];
+            const selected = newRow.querySelector("td:nth-child(2) select");
+            console.log("Select element:", selected);
 
-            const select = document.querySelector(`#invoiceTable tbody tr:nth-child(${rowIndex}) td:nth-child(1) select`);
-            console.log("Select element:", select);
-
-            if (!select) {
+            if (!selected) {
                 console.error("Select element not found.");
                 return;
             }
 
-            const fruitId = select.value;
+            const fruitId = selected.value;
 
             // Make an AJAX request to fetch the fruit data
             fetch(`/fruits/getFruit/${fruitId}`)
                 .then(response => response.json())
                 .then(data => {
-                const fruitNameInput = document.querySelector(`#invoiceTable tbody tr:nth-child(${rowIndex}) td:nth-child(2) input`);
-                const fruitCategoryInput = document.querySelector(`#invoiceTable tbody tr:nth-child(${rowIndex}) td:nth-child(3) input`);
+                    const fruitName = newRow.querySelector("td:nth-child(3) input");
+                    const fruitCategory = newRow.querySelector("td:nth-child(4) input");
+                    const unit = newRow.querySelector("td:nth-child(5) input");
+                    const price = newRow.querySelector("td:nth-child(6) input");
+                    const quantity = newRow.querySelector("td:nth-child(7) input");
+                    const amount = newRow.querySelector("td:nth-child(8) input");
 
-                if (data && data.FruitName && data.FruitCategory) {
-                    fruitNameInput.value = data.FruitName;
-                    fruitCategoryInput.value = data.FruitCategory;
-                } else {
-                    fruitNameInput.value = 'Fruit data not found';
-                    fruitCategoryInput.value = 'Fruit data not found';
-                    console.error("Fruit data not found.");
-                }
+                    fruitName.value = data.FruitName;
+                    fruitCategory.value = data.FruitCategory;
+                    unit.value = data.Unit;
+                    price.value = data.Price;
+                    amount.value = (quantity.value * price.value);
+
                 })
                 .catch(error => {
-                console.error('Error fetching fruit data:', error);
+                    console.error('Error fetching fruit data:', error);
                 });
+
+        }
+
+        function submitForm() {
+            const tableBody = document.querySelector("#invoiceTable tbody");
+            const form = document.getElementById("invoiceForm");
+
+            const formData = new FormData(form);
+
+            const fruitDetails = [];
+            const allrow = tableBody.querySelectorAll("tr");
+            for (const row of allrow) {
+                const selectElement = row.querySelector("td:nth-child(2) select");
+                const quantityElement = row.querySelector("td:nth-child(7) input");
+
+                if (selectElement && quantityElement) {
+                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                    const fruit_id = selectedOption.value;
+                    const quantity = quantityElement.value;
+                    fruitDetails.push({
+                        fruit_id,
+                        quantity
+                    });
+                } else {
+                    'Please fill all field Quantity and FruitID'
+                }
             }
+            formData.append("fruit_details", JSON.stringify(fruitDetails));
+
+            // Submit the form using fetch
+            fetch(form.action, {
+                    method: "POST",
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    // Handle response if needed
+                })
+                .catch(error => {
+                    // Handle error
+                });
+            form.submit();
+        }
     </script>
 </x-app-layout>
-
