@@ -1,7 +1,7 @@
 <x-app-layout>
     <h1> This page show the invoices </h1>
     <div class="customer-container">
-        <form id="invoiceForm" method="POST" action="{{ route('invoices.store') }}">
+        <form id="invoiceForm" action="{{ route('invoices.store') }}" method="post">
             @csrf
             <label for="customer_name">Customer Name:</label>
             <input type="text" id="customer_name" name="customer_name" required>
@@ -127,32 +127,27 @@
 
         }
 
-        function checkAmount() {
 
+        function checkAmount() {
+            const tableBody = document.querySelector("#invoiceTable tbody");
             const total = document.querySelector("#total-amount input");
             let totalAmount = 0;
-            const rows = tableBody.querySelectorAll("tr");
-
-            for (const row of rows) {
-
-                const selectElement = row.querySelector("td:nth-child(2) select");
-                console.log("selectedElement: ", selectElement);
-                const quantityElement = row.querySelector("td:nth-child(7) input");
-                const selectedOption = selectElement.options[selectElement.selectedIndex];
-                console.log("selectedOption: ", selectedOption.value);
-
-
+            const allrow = tableBody.querySelectorAll("tr");
+            for (const row of allrow) {
+                // const price = row.querySelector("td:nth-child(6) input");
+                // const quantity = row.querySelector("td:nth-child(7) input");
                 const amountCell = row.querySelector("td:nth-child(8) input");
                 if (amountCell) {
+                    // const amount = (quantity.value*price.value);
                     console.log("amount cell:", amountCell.value);
                     totalAmount = parseInt(totalAmount) + parseInt(amountCell.value);
                 }
+                //     // const amount = parseFloat(amountCell.name);
+                // }
             }
             console.log("Total Amount:", totalAmount);
             total.value = totalAmount;
         }
-
-
 
 
         function submitForm() {
@@ -163,27 +158,28 @@
                 'select[name^="fruits["]');
             console.log("selected Element", selectElements);
 
-            const fruit_details = [];
+            const fruitDetails = [];
 
-            for (let i = 1; i <= rows.length; i++) {
-                const row = rows[i];
-                const quantityElement = row.querySelector('td:nth-child(7) input');
+            for (let i = 1; i < rows.length; i++) {
+                const rowInd = rows[i];
+                const quantityElement = rowInd.querySelector('td:nth-child(7) input');
                 const selectedOption = selectElements[i - 1].options[selectElements[i - 1].selectedIndex];
                 console.log("Selected Option", i, selectedOption);
                 console.log("Quantity Element", i, quantityElement);
                 if (quantityElement && selectedOption) {
                     const quantity = quantityElement.value;
                     const fruit_id = selectedOption.value;
-                    fruit_details.push({
+                    fruitDetails.push({
                         fruit_id,
                         quantity
                     });
+
                 }
-                console.log('fruit_details:', fruit_details);
-                const form = tableBody.closest('form');
-                const formData = new FormData(form);
-                formData.append('fruit_details', JSON.stringify(fruitDetails));
             }
+            console.log('fruit_details:', fruitDetails);
+            const form = document.getElementById("invoiceForm");
+            const formData = new FormData(form);
+            formData.append('fruit_details', JSON.stringify(fruitDetails));
 
 
             fetch(form.action, {
@@ -196,6 +192,7 @@
                 .catch(error => {
                     // Handle error
                 });
+
         }
     </script>
 </x-app-layout>

@@ -48,16 +48,16 @@ class InvoicesController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'customer_name' => 'required|string',
-            'fruit_details' => 'required|array|min:1',
-            'fruit_details.*.fruit_id' => 'required|exists:fruits,id',
-            'fruit_details.*.quantity' => 'required|integer|min:1',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'customer_name' => 'required|string',
+        //     'fruit_details' => 'required|array|min:1',
+        //     // 'fruit_details.*.fruit_id' => 'required|exists:fruits,id',
+        //     // 'fruit_details.*.quantity' => 'required|integer|min:1',
+        // ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        // if ($validator->fails()) {
+        //     echo "back-end validator Fail";
+        // }
 
         $customerName = $request->input('customer_name');
         $customer = Customer::where('Customer_Name', $customerName)->first();
@@ -72,19 +72,18 @@ class InvoicesController extends Controller
             'customerID' => $customer->id,
         ]);
 
-        $fruitDetails = $request->input('fruit_details');
-
+        $fruitDetails = json_decode($request->input('fruit_details'), true);
         foreach ($fruitDetails as $detail) {
             $fruit_id = $detail['fruit_id'];
             $quantity = $detail['quantity'];
 
-            $fruit = Fruit::findOrFail($fruit_id);
+            $fruit = Fruit::find($fruit_id);
 
             if ($fruit) {
                 $invoice->fruits()->attach($fruit, ['quantity' => $quantity]);
             }
         }
 
-        return redirect('invoices')->with('Invoice created successfully.');
+        return redirect('invoices')->with('success', 'Invoice created successfully.');
     }
 }
