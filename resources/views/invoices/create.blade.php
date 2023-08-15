@@ -7,9 +7,9 @@
             <input type="text" id="customer_name" name="customer_name" required>
             <button id="submitButton" class="create-button" type="button" onclick="submitForm()">Submit Invoice</button>
         </form>
-        <div id="total-amount"><input type="text" placeholder="Total Amount" disabled></div>
-        <button class="small-button" type="button" onclick="checkAmount()">Check Amount</button>
-
+        <div id="total-amount"><input type="text" placeholder="Total Amount" disabled>
+            <button class="small-button" type="button" onclick="checkAmount()">Check Amount</button>
+        </div>
         <button class="create-button" type="button" onclick="addRow()">Add Fruit</button>
     </div>
 
@@ -50,15 +50,13 @@
 
             const cell1 = newRow.insertCell(1);
 
-            cell1.innerHTML = `<div class="customer-container">
-                <select name="fruits[${rowCount}][id]" required>
+            cell1.innerHTML = `
+                <select id="selected-fruit" name="fruits[${rowCount}][id]" required>
                     <option value="">Select Fruit ID</option>
                     @foreach ($fruits as $fruit)
                         <option value="{{ $fruit->id }}">{{ $fruit->id }}</option>
                     @endforeach
-                </select>
-                <button class="small-button" type="button" onclick="checkRow(${rowCount})">Check Row</button>
-                </div>`;
+                </select>`;
             const cell2 = newRow.insertCell(2);
             cell2.innerHTML =
                 `<input type="text" placeholder="Fruit Name ${rowCount}" name="fruits[${rowCount}][FruitName]" disabled>`;
@@ -82,6 +80,11 @@
             const cell7 = newRow.insertCell(7);
             cell7.innerHTML =
                 `<input type="text" placeholder="Amount ${rowCount}" name="fruits[${rowCount}][amount]" readonly>`;
+
+            const cell8 = newRow.insertCell(8);
+            cell8.innerHTML =
+                `<div class="customer-container"><button class="small-button" type="button" onclick="checkRow(${rowCount})">Check Row</button></div>`;
+
         }
 
 
@@ -124,35 +127,67 @@
 
         }
 
+        function checkAmount() {
+
+            const total = document.querySelector("#total-amount input");
+            let totalAmount = 0;
+            const rows = tableBody.querySelectorAll("tr");
+
+            for (const row of rows) {
+
+                const selectElement = row.querySelector("td:nth-child(2) select");
+                console.log("selectedElement: ", selectElement);
+                const quantityElement = row.querySelector("td:nth-child(7) input");
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                console.log("selectedOption: ", selectedOption.value);
+
+
+                const amountCell = row.querySelector("td:nth-child(8) input");
+                if (amountCell) {
+                    console.log("amount cell:", amountCell.value);
+                    totalAmount = parseInt(totalAmount) + parseInt(amountCell.value);
+                }
+            }
+            console.log("Total Amount:", totalAmount);
+            total.value = totalAmount;
+        }
+
+
+
+
         function submitForm() {
             const tableBody = document.querySelector("#invoiceTable tbody");
-            const form = document.getElementById("invoiceForm");
+            const rows = tableBody.querySelectorAll('tr');
+            console.log("row length:", rows.length);
+            const selectElements = document.querySelectorAll(
+                'select[name^="fruits["]');
+            console.log("selected Element", selectElements);
 
-            const formData = new FormData(form);
+            const fruit_details = [];
 
-            const fruitDetails = [];
-            const allrow = tableBody.querySelectorAll("tr");
-            for (const row of allrow) {
-                const selectElement = row.querySelector("td:nth-child(2) select");
-                const quantityElement = row.querySelector("td:nth-child(7) input");
-
-                if (selectElement && quantityElement) {
-                    const selectedOption = selectElement.options[selectElement.selectedIndex];
-                    const fruit_id = selectedOption.value;
+            for (let i = 1; i <= rows.length; i++) {
+                const row = rows[i];
+                const quantityElement = row.querySelector('td:nth-child(7) input');
+                const selectedOption = selectElements[i - 1].options[selectElements[i - 1].selectedIndex];
+                console.log("Selected Option", i, selectedOption);
+                console.log("Quantity Element", i, quantityElement);
+                if (quantityElement && selectedOption) {
                     const quantity = quantityElement.value;
-                    fruitDetails.push({
+                    const fruit_id = selectedOption.value;
+                    fruit_details.push({
                         fruit_id,
                         quantity
                     });
-                } else {
-                    'Please fill all field Quantity and FruitID'
                 }
+                console.log('fruit_details:', fruit_details);
+                const form = tableBody.closest('form');
+                const formData = new FormData(form);
+                formData.append('fruit_details', JSON.stringify(fruitDetails));
             }
-            formData.append("fruit_details", JSON.stringify(fruitDetails));
 
-            // Submit the form using fetch
+
             fetch(form.action, {
-                    method: "POST",
+                    method: 'POST',
                     body: formData
                 }).then(response => response.json())
                 .then(data => {
@@ -161,7 +196,6 @@
                 .catch(error => {
                     // Handle error
                 });
-            form.submit();
         }
     </script>
 </x-app-layout>
