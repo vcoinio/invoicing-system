@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('invoices/{invoice}', [InvoicesController::class, 'edit'])->name('invoices.edit');
     Route::delete('invoices/{invoice}', [InvoicesController::class, 'delete'])->name('invoices.delete');
     Route::delete('invoices/{invoice}/fruits/{fruit}', [InvoicesController::class, 'fruitDelete'])->name('invoices.fruits.remove');
+    Route::post('invoices/update', [InvoicesController::class, 'updateFruit'])->name('invoices.updateFruit');
 
 
 

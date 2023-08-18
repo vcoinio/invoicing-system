@@ -20,7 +20,8 @@ class InvoicesController extends Controller
     public function edit($invoiceID)
     {
         $invoice = Invoice::findOrFail($invoiceID);
-        return view('invoices.edit', ['invoice' => $invoice]);
+        $fruits = Fruit::all();
+        return view('invoices.edit', ['invoice' => $invoice,'fruits'=>$fruits],compact('invoice'));
     }
 
     public function delete($invoiceId)
@@ -85,5 +86,19 @@ class InvoicesController extends Controller
         }
 
         return redirect('invoices')->with('success', 'Invoice created successfully.');
+    }
+    public function updateFruit(Request $request){
+
+        $fruitDetails = json_decode($request->input('fruit_details'), true);
+        foreach ($fruitDetails as $detail) {
+            $fruit_id = $detail['fruit_id'];
+            $quantity = $detail['quantity'];
+            $invoice = Invoice::find($invoiceID);
+            $fruit = Fruit::find($fruit_id);
+
+            if ($fruit) {
+                $invoice->fruits()->attach($fruit, ['quantity' => $quantity]);
+            }
+        }
     }
 }
